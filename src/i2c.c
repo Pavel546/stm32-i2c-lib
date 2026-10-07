@@ -46,3 +46,27 @@ void I2C1_Init(uint32_t APB1_clock_mhz){
 	//Включение модуля
 	I2C1_CR1 |= (1 << 0);
 }
+
+void I2C1_Start(void){
+
+	I2C1_CR1 |= (1 << 8);
+	while(!(I2C1_SR1 & (1 << 0)));
+
+}
+
+void I2C1_Stop(void){
+
+	I2C1_CR1 |= (1 << 9);
+
+}
+
+void I2C1_SendAddress(uint8_t address, uint8_t direction){
+
+	address <<= 1;
+	address |= direction;
+	I2C1_DR = address;
+	while(!(I2C1_SR1 & (1 << 1)));
+	(void) I2C1_SR1;
+	(void) I2C1_SR2;
+
+}
