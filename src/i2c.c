@@ -70,3 +70,23 @@ void I2C1_SendAddress(uint8_t address, uint8_t direction){
 	(void) I2C1_SR2;
 
 }
+
+void I2C1_Write(uint8_t data){
+
+	while(!(I2C1_SR1 & (1 << 7)));
+	I2C1_DR = data;
+	while(!(I2C1_SR1 & (1 << 2)));
+
+}
+
+uint8_t I2C1_Read(uint8_t address){
+
+	I2C1_Start();
+	I2C1_SendAddress(address, 1);
+	I2C1_CR1 &= ~(1 << 10);
+	I2C1_Stop();
+	while(!(I2C1_SR1 & (1 << 6)));
+	uint8_t data = I2C1_DR;
+	return data;
+
+}

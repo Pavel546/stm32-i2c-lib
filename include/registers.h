@@ -7,8 +7,8 @@
 
 
 //Адреса подачи питания на шины переферии
-#define AHB1ENR (*(volatile uint32_t*)(RCC_BASE + 0x30))
-#define APB1ENR (*(volatile uint32_t*)(RCC_BASE + 0x40))
+#define RCC_AHB1ENR (*(volatile uint32_t*)(RCC_BASE + 0x30))
+#define RCC_APB1ENR (*(volatile uint32_t*)(RCC_BASE + 0x40))
 
 //Адреса управления GPIOB
 #define GPIOB_MODER (*(volatile uint32_t*)(GPIOB_BASE + 0x00))

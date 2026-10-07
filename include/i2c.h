@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 //Инициализация
-void I2C1_Init(void);
+void I2C1_Init(uint32_t APB1_clock_mhz);
 
 //Сигнал СТАРТ
 void I2C1_Start(void);
@@ -20,6 +20,6 @@ void I2C1_SendAddress(uint8_t address, uint8_t direction);
 void I2C1_Write(uint8_t data);
 
 //Чтение одного байта данных
-void I2C1_Read(uint8_t address);
+uint8_t I2C1_Read(uint8_t address);
 
 #endif
