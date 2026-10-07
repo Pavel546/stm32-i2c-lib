@@ -42,20 +42,47 @@ void delay(volatile uint32_t count) {
 
 void main (void) {
 
+	delay(500000);
 	//Инициализация I2C1
 	I2C1_Init(16);
 
 	//Конфигурация дисплея
-	OLED_SendCommand(0xAE); // 1. Выключить дисплей (Display OFF)
-	OLED_SendCommand(0xA8); // 2. Команда настройки высоты экрана (Multiplex Ratio)
-	OLED_SendCommand(0x1F); // 3. Значение высоты: 32 строки (0x1F = 31, отсчет от 0)
-	OLED_SendCommand(0xD3); // 4. Команда смещения экрана (Display Offset)
-	OLED_SendCommand(0x00); // 5. Значение смещения: 0 (без смещения)
-	OLED_SendCommand(0x8D); // 6. Команда управления внутренним питанием (Charge Pump)
-	OLED_SendCommand(0x14); // 7. Значение: Включить Charge Pump (иначе OLED не загорится)
-	OLED_SendCommand(0xAF); // 8. Включить дисплей (Display ON)
+	OLED_SendCommand(0xAE); // Выключить дисплей (Display OFF)
+	OLED_SendCommand(0x20); // Выбор режима адресации памяти
+	OLED_SendCommand(0x00); // Горизонтальная адресация (память как один массив)
+	OLED_SendCommand(0xA8); // Настройка коэффициента мультиплексирования (высота)
+	OLED_SendCommand(0x1F); // Высота матрицы: 32 строки (0x1F = 31)
+	OLED_SendCommand(0xD3); // Настройка вертикального смещения (Display Offset)
+	OLED_SendCommand(0x00); // Смещение отсутствует
+	OLED_SendCommand(0x40); // Установка стартовой строки развертки памяти в 0
+	OLED_SendCommand(0x8D); // Управление встроенным умножителем напряжения (Charge Pump)
+	OLED_SendCommand(0x14); // Включить умножитель (иначе OLED-панель не засветится)
+	OLED_SendCommand(0xA1); // Развертка по горизонтали (отражение влево/вправо)
+	OLED_SendCommand(0xC8); // Развертка по вертикали (отражение вверх/вниз)
+	OLED_SendCommand(0xDA); // Конфигурация аппаратных выводов сетки (COM Pins)
+	OLED_SendCommand(0x02); // Оптимальный режим для разрешения 128x32
+	OLED_SendCommand(0x81); // Настройка яркости (Яркость/Контраст)
+	OLED_SendCommand(0x7F); // Значение яркости (среднее положение)
+	OLED_SendCommand(0xD5); // Настройка частоты генератора дисплея
+	OLED_SendCommand(0x80); // Стандартное заводское значение делителя
+	OLED_SendCommand(0xD9); // Фазы циклов предзаряда матрицы
+	OLED_SendCommand(0xF1); // Рекомендуемые тайминги для стабильной картинки
+	OLED_SendCommand(0xDB); // Уровень напряжения удержания пикселей (VCOMH)
+	OLED_SendCommand(0x40); // Стандартный порог стабильности
+	OLED_SendCommand(0xA4); // Включение режима вывода данных из памяти RAM
+	OLED_SendCommand(0xA6); // Режим отображения: прямой (не инверсный)
+	OLED_SendCommand(0xAF); // Включить дисплей (Display ON)
+
 
 	while(1){
+
+		// Подготовка геометрии перед полной заливкой
+		OLED_SendCommand(0x21); // Задать диапазон колонок
+		OLED_SendCommand(0x00); // Старт: 0
+		OLED_SendCommand(0x7F); // Конец: 127
+		OLED_SendCommand(0x22); // Задать диапазон страниц (полос)
+		OLED_SendCommand(0x00); // Старт: 0
+		OLED_SendCommand(0x03); // Конец: 3 (всего 4 страницы для 32 пикселей)
 
 		//Заливка экрана
 		for(int i = 0; i < 512; i++){
@@ -65,6 +92,14 @@ void main (void) {
 		//Задержка
 		delay(1000000);
 
+		// Подготовка геометрии перед полной очисткой
+		OLED_SendCommand(0x21); // Задать диапазон колонок
+		OLED_SendCommand(0x00); // Старт: 0
+		OLED_SendCommand(0x7F); // Конец: 127
+		OLED_SendCommand(0x22); // Задать диапазон страниц
+		OLED_SendCommand(0x00); // Старт: 0
+		OLED_SendCommand(0x03); // Конец: 3
+        
 		//Очистка экрана
 		for(int i = 0; i < 512; i++){
 			OLED_SendData(0x00);
